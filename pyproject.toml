@@ -10,4 +10,5 @@ dependencies = [
     "starlette>=0.46.2",
     "uvicorn>=0.34.2",
     "yfinance>=0.2.61",
+    "kubernetes>=28.1.0",
 ]
