@@ -6,6 +6,9 @@ from mcp_instance import mcp
 # Import all Kubernetes tool modules
 import k8s_client
 import k8s_deployments
+import k8s_pods
+import k8s_services
+import k8s_replicasets
 
 # Create Starlette app
 app = Starlette(
