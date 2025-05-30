@@ -1,0 +1,13 @@
+[project]
+name = "k8s-mcp-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.9.0",
+    "starlette>=0.46.2",
+    "uvicorn>=0.34.2",
+    "yfinance>=0.2.61",
+]
