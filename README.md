@@ -12,16 +12,16 @@ This project is a Model Control Protocol (MCP) server for Kubernetes operations.
 
 ### Using Docker
 
-1. **Build the Docker image:**
+1. **Pull the Docker image:**
 
    ```sh
-   docker build -t k8s-mcp-server .
+   docker pull chinnareddy578/k8s-mcp-server
    ```
 
 2. **Run the Docker container:**
 
    ```sh
-   docker run -p 8080:8080 k8s-mcp-server
+   docker run -p 8080:8080 chinnareddy578/k8s-mcp-server
    ```
 
    The server will be accessible at [http://localhost:8080](http://localhost:8080).
@@ -70,6 +70,23 @@ This project is a Model Control Protocol (MCP) server for Kubernetes operations.
 
    - GitHub Copilot will now use the MCP server for code suggestions and completions.
 
+   **GitHub Copilot MCP Client Configuration:**
+
+   ```json
+   {
+       "servers": {
+           "k8s-mcp-server": {
+               "command": "npx",
+               "args": [
+                 "-y",
+                 "mcp-remote",
+                 "http://localhost:8080/sse"
+               ]
+           }
+       }
+   }
+   ```
+
 ### Claude Desktop
 
 1. **Configure Claude Desktop:**
@@ -80,6 +97,23 @@ This project is a Model Control Protocol (MCP) server for Kubernetes operations.
 2. **Use Claude Desktop:**
 
    - Claude Desktop will now use the MCP server for code suggestions and completions.
+
+   **Claude Desktop MCP Client Configuration:**
+
+   ```json
+   {
+       "mcpServers": {
+           "k8s-mcp-server": {
+               "command": "npx",
+               "args": [
+                 "-y",
+                 "mcp-remote",
+                 "http://localhost:8081/sse"
+               ]
+           }
+       }
+   }
+   ```
 
 ### Other MCP Clients
 
