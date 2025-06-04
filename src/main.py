@@ -1,24 +1,26 @@
 from starlette.applications import Starlette
 from starlette.routing import Mount
 import uvicorn
-from mcp_instance import mcp
 import os
+from mcp.server.fastmcp import FastMCP
+from mcp_instance import mcp
 
-# Import all Kubernetes tool modules
+# Import all modules that contain tools
 import k8s_client
 import k8s_deployments
-import k8s_pods
 import k8s_services
 import k8s_replicasets
+import k8s_pods
 
-# Create Starlette app
-app = Starlette(
-    routes=[
-        Mount("/", app=mcp.sse_app()),
-    ]
-)
+import asyncio
+
+async def print_tools():
+    tools = await mcp.list_tools()
+    print("Available tools:", tools)
 
 if __name__ == "__main__":
+    asyncio.run(print_tools())
     host = os.getenv("HOST", "0.0.0.0")  # Use 0.0.0.0 to allow external connections
     port = int(os.getenv("PORT", "8080"))
-    uvicorn.run(app, host=host, port=port) 
+    print(f"Starting MCP server on {host}:{port}")
+    uvicorn.run(mcp.streamable_http_app, host=host, port=port) 
