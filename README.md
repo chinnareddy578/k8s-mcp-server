@@ -4,29 +4,14 @@ This project is a Model Control Protocol (MCP) server for Kubernetes operations.
 
 ## Prerequisites
 
-- Docker
 - Python 3.12 or higher
 - `uv` package manager
+- Minikube (for local Kubernetes development)
+- Docker (optional, for containerized deployment)
 
-## Building and Running the MCP Server
+## Running the MCP Server
 
-### Using Docker
-
-1. **Pull the Docker image:**
-
-   ```sh
-   docker pull chinnareddy578/k8s-mcp-server
-   ```
-
-2. **Run the Docker container:**
-
-   ```sh
-   docker run -p 8080:8080 chinnareddy578/k8s-mcp-server
-   ```
-
-   The server will be accessible at [http://localhost:8080](http://localhost:8080).
-
-### Using Python Directly
+### Primary Method: Running Directly
 
 1. **Create a virtual environment:**
 
@@ -57,6 +42,23 @@ This project is a Model Control Protocol (MCP) server for Kubernetes operations.
    python src/main.py
    ```
 
+### Alternative Method: Using Docker (Optional)
+
+1. **Pull the Docker image:**
+
+   ```sh
+   docker pull chinnareddy578/k8s-mcp-server
+   ```
+
+2. **Run the Docker container:**
+
+   ```sh
+   docker run -it \
+     -v ${HOME}/.kube:/root/.kube:ro \
+     -v ${HOME}/.minikube:/root/.minikube:ro \
+     chinnareddy578/k8s-mcp-server
+   ```
+
 ## Using the MCP Server with MCP Clients
 
 ### GitHub Copilot
@@ -64,72 +66,102 @@ This project is a Model Control Protocol (MCP) server for Kubernetes operations.
 1. **Configure GitHub Copilot:**
 
    - Open your GitHub Copilot settings.
-   - Set the MCP server URL to `http://localhost:8080`.
-
-2. **Use GitHub Copilot:**
-
-   - GitHub Copilot will now use the MCP server for code suggestions and completions.
-
-   **GitHub Copilot MCP Client Configuration:**
+   - Add the following configuration:
 
    ```json
    {
        "servers": {
            "k8s-mcp-server": {
-               "command": "npx",
+               "command": "python",
                "args": [
-                 "-y",
-                 "mcp-remote",
-                 "http://localhost:8080/sse"
+                   "src/main.py"
                ]
            }
        }
    }
    ```
+
+   Alternatively, if you prefer using Docker:
+
+   ```json
+   {
+       "servers": {
+           "k8s-mcp-server": {
+               "command": "docker",
+               "args": [
+                   "run",
+                   "-i",
+                   "--rm",
+                   "--init",
+                   "-e", "PYTHONUNBUFFERED=1",
+                   "-v", "${HOME}/.kube:/root/.kube:ro",
+                   "-v", "${HOME}/.minikube:/root/.minikube:ro",
+                   "chinnareddy578/k8s-mcp-server"
+               ]
+           }
+       }
+   }
+   ```
+
+2. **Use GitHub Copilot:**
+
+   - GitHub Copilot will now use the MCP server for code suggestions and completions.
 
 ### Claude Desktop
 
 1. **Configure Claude Desktop:**
 
    - Open Claude Desktop settings.
-   - Set the MCP server URL to `http://localhost:8080`.
-
-2. **Use Claude Desktop:**
-
-   - Claude Desktop will now use the MCP server for code suggestions and completions.
-
-   **Claude Desktop MCP Client Configuration:**
+   - Add the following configuration:
 
    ```json
    {
        "mcpServers": {
            "k8s-mcp-server": {
-               "command": "npx",
+               "command": "python",
                "args": [
-                 "-y",
-                 "mcp-remote",
-                 "http://localhost:8081/sse"
+                   "src/main.py"
                ]
            }
        }
    }
    ```
 
-### Other MCP Clients
+   Alternatively, if you prefer using Docker:
 
-For other MCP clients, follow these general steps:
+   ```json
+   {
+       "mcpServers": {
+           "k8s-mcp-server": {
+               "command": "docker",
+               "args": [
+                   "run",
+                   "-i",
+                   "--rm",
+                   "--init",
+                   "-e", "PYTHONUNBUFFERED=1",
+                   "-v", "${HOME}/.kube:/root/.kube:ro",
+                   "-v", "${HOME}/.minikube:/root/.minikube:ro",
+                   "chinnareddy578/k8s-mcp-server"
+               ]
+           }
+       }
+   }
+   ```
 
-1. **Configure the client:**
+2. **Use Claude Desktop:**
 
-   - Set the MCP server URL to `http://localhost:8080`.
-
-2. **Use the client:**
-
-   - The client will now use the MCP server for code suggestions and completions.
+   - Claude Desktop will now use the MCP server for code suggestions and completions.
 
 ## Troubleshooting
 
-- **Connection Issues:** Ensure the Docker container is running and the port is correctly mapped. Check with:
+- **Kubernetes Configuration:** Make sure Minikube is running and your kubeconfig is properly set up:
+  ```sh
+  minikube status
+  minikube kubectl -- get pods
+  ```
+
+- **Connection Issues:** If using Docker, ensure the container is running and has access to your Kubernetes configuration:
   ```sh
   docker ps
   ```
