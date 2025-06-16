@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Union
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 from mcp_instance import mcp
+from k8s_utils import get_k8s_client
 
 def get_k8s_client(kubeconfig: Optional[str] = None):
     """Initialize Kubernetes client"""
@@ -49,8 +50,8 @@ def create_deployment(
     image: str,
     replicas: int = 1,
     container_port: int = 80,
-    labels: Dict[str, str] = None,
-    env_vars: Dict[str, str] = None
+    labels: Optional[Dict[str, str]] = None,
+    env_vars: Optional[Dict[str, str]] = None
 ) -> str:
     """Create a new deployment"""
     api = get_k8s_client()['apps']

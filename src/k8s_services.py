@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Union
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 from mcp_instance import mcp
+from k8s_utils import get_k8s_client
 
 def get_k8s_client(kubeconfig: Optional[str] = None):
     """Initialize Kubernetes client"""
@@ -77,37 +78,19 @@ def create_service(
     namespace: str,
     service_name: str,
     selector: Dict[str, str],
-    ports: List[Dict[str, Any]],
-    service_type: str = "ClusterIP",
-    external_ips: Optional[List[str]] = None,
-    labels: Optional[Dict[str, str]] = None,
-    annotations: Optional[Dict[str, str]] = None
+    port: int = 80,
+    target_port: int = 80,
+    service_type: str = "ClusterIP"
 ) -> str:
-    """Create a new service with specified configuration"""
+    """Create a new service"""
     api = get_k8s_client()['core']
     
-    service_ports = [
-        client.V1ServicePort(
-            name=port.get("name"),
-            port=port["port"],
-            target_port=port.get("target_port"),
-            protocol=port.get("protocol", "TCP")
-        )
-        for port in ports
-    ]
-
     service = client.V1Service(
-        metadata=client.V1ObjectMeta(
-            name=service_name,
-            namespace=namespace,
-            labels=labels,
-            annotations=annotations
-        ),
+        metadata=client.V1ObjectMeta(name=service_name),
         spec=client.V1ServiceSpec(
-            type=service_type,
             selector=selector,
-            ports=service_ports,
-            external_i_ps=external_ips
+            ports=[client.V1ServicePort(port=port, target_port=target_port)],
+            type=service_type
         )
     )
 

@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Union
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 from mcp_instance import mcp
+from k8s_utils import get_k8s_client
 
 def get_k8s_client(kubeconfig: Optional[str] = None):
     """Initialize Kubernetes client"""
@@ -176,13 +177,9 @@ def create_replicaset(
         ),
         spec=client.V1ReplicaSetSpec(
             replicas=replicas,
-            selector=client.V1LabelSelector(
-                match_labels=selector
-            ),
+            selector=client.V1LabelSelector(match_labels=selector),
             template=client.V1PodTemplateSpec(
-                metadata=client.V1ObjectMeta(
-                    labels=selector
-                ),
+                metadata=client.V1ObjectMeta(labels=labels),
                 spec=client.V1PodSpec(
                     containers=[
                         client.V1Container(

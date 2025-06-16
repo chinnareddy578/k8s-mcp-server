@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Union
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 from mcp_instance import mcp
+from k8s_utils import get_k8s_client
 import base64
 
 def get_k8s_client(kubeconfig: Optional[str] = None):
@@ -52,22 +53,14 @@ def get_pod_details(namespace: str, pod_name: str) -> Dict[str, Any]:
         raise Exception(f"Failed to get pod details: {str(e)}")
 
 @mcp.tool()
-def get_pod_logs(
-    namespace: str,
-    pod_name: str,
-    container: Optional[str] = None,
-    tail_lines: Optional[int] = None,
-    previous: bool = False
-) -> str:
+def get_pod_logs(namespace: str, pod_name: str, container: Optional[str] = None) -> str:
     """Get logs from a pod"""
     api = get_k8s_client()['core']
     try:
         return api.read_namespaced_pod_log(
             name=pod_name,
             namespace=namespace,
-            container=container,
-            tail_lines=tail_lines,
-            previous=previous
+            container=container
         )
     except ApiException as e:
         raise Exception(f"Failed to get pod logs: {str(e)}")

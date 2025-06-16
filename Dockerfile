@@ -25,7 +25,11 @@ RUN uv venv /app/venv && \
     . /app/venv/bin/activate && \
     uv pip install -e .
 
-# Expose the port the app runs on
+# Create directories for kubeconfig and minikube
+RUN mkdir -p /root/.kube && \
+    mkdir -p /root/.minikube
+
+# Expose the port the app runs on (for HTTP mode)
 EXPOSE 8080
 
 # Set PYTHONPATH to include src directory
@@ -34,5 +38,12 @@ ENV PYTHONPATH=/app/src
 # Use the virtual environment's Python
 ENV PATH="/app/venv/bin:$PATH"
 
+# Set default environment variables
+ENV MCP_MODE=stdio
+ENV HOST=0.0.0.0
+ENV PORT=8080
+ENV PYTHONUNBUFFERED=1
+ENV KUBECONFIG=/root/.kube/config
+
 # Command to run the application
-CMD ["python", "src/main.py"] 
+ENTRYPOINT ["python", "-u", "src/main.py"] 
